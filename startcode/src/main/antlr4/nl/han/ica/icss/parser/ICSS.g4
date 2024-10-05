@@ -44,6 +44,22 @@ ASSIGNMENT_OPERATOR: ':=';
 
 
 
+
 //--- PARSER: ---
-stylesheet: EOF;
+stylesheet: styleObject+ EOF;
+
+styleObject: selector OPEN_BRACE styleRule+ CLOSE_BRACE;
+
+selector: tagSelector | classSelector | idSelector;
+tagSelector: LOWER_IDENT | CAPITAL_IDENT;
+classSelector: CLASS_IDENT;
+idSelector: ID_IDENT;
+
+styleRule: trait COLON value SEMICOLON;
+
+trait: LOWER_IDENT | CAPITAL_IDENT;
+value: COLOR | TRUE | FALSE | PIXELSIZE | PERCENTAGE | SCALAR;
+
+//TODO: MAKE LEVEL 0 GRAMMAR
+
 
