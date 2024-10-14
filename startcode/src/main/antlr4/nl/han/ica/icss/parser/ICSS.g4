@@ -46,17 +46,20 @@ ASSIGNMENT_OPERATOR: ':=';
 
 
 //--- PARSER: ---
-stylesheet: styleObject+ EOF;
+stylesheet: styleRule+ EOF;
 
-styleObject: selector OPEN_BRACE styleRule+ CLOSE_BRACE;
+styleRule: selector OPEN_BRACE declaration+ CLOSE_BRACE;
 
 selector: tagSelector | classSelector | idSelector;
 tagSelector: LOWER_IDENT | CAPITAL_IDENT;
 classSelector: CLASS_IDENT;
 idSelector: ID_IDENT;
 
-styleRule: trait COLON value SEMICOLON;
+declaration: property COLON expression SEMICOLON;
 
-trait: LOWER_IDENT | CAPITAL_IDENT;
-value: COLOR | TRUE | FALSE | PIXELSIZE | PERCENTAGE | SCALAR;
+property: LOWER_IDENT | CAPITAL_IDENT;
+
+//To distinguish between these two, use #identifier
+expression:     PIXELSIZE #pixelsize | PERCENTAGE #percentage | COLOR #color | SCALAR #scalar | BOOL #boolean;
+BOOL: TRUE | FALSE;
 
