@@ -46,20 +46,46 @@ ASSIGNMENT_OPERATOR: ':=';
 
 
 //--- PARSER: ---
-stylesheet: styleRule+ EOF;
+//Level 0:
+stylesheet: styleObject+ EOF;
 
-styleRule: selector OPEN_BRACE declaration+ CLOSE_BRACE;
+styleObject: variableAssignment | styleRule;
+
+styleRule: selector OPEN_BRACE styleRuleObject+ CLOSE_BRACE;
 
 selector: tagSelector | classSelector | idSelector;
-tagSelector: LOWER_IDENT | CAPITAL_IDENT;
+tagSelector: name;
 classSelector: CLASS_IDENT;
 idSelector: ID_IDENT;
 
 declaration: property COLON expression SEMICOLON;
 
-property: LOWER_IDENT | CAPITAL_IDENT;
+property: name;
 
 //To distinguish between these two, use #identifier
-expression:     PIXELSIZE #pixelsize | PERCENTAGE #percentage | COLOR #color | SCALAR #scalar | BOOL #boolean;
-BOOL: TRUE | FALSE;
+expression:     literal #literalValue |
+                variableReference #variableValue|
+                expression MUL expression #multiplication|
+                expression (PLUS | MIN) expression #addition;
+
+literal:  booleann #bool | PIXELSIZE #pixelsize | PERCENTAGE #percentage | COLOR #color | SCALAR #scalar;
+
+booleann: TRUE | FALSE;
+
+//Level 1:
+variableAssignment: variableReference ASSIGNMENT_OPERATOR literal SEMICOLON;
+
+variableReference: name;
+
+name : LOWER_IDENT | CAPITAL_IDENT;
+
+//level 3:
+styleRuleObject: declaration | branch;
+
+branch: if else?;
+
+if: IF BOX_BRACKET_OPEN variableReference BOX_BRACKET_CLOSE OPEN_BRACE styleRuleObject+ CLOSE_BRACE;
+
+else: ELSE OPEN_BRACE styleRuleObject+ CLOSE_BRACE;
+
 

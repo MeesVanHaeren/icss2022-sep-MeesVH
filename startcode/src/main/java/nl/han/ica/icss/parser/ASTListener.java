@@ -127,8 +127,8 @@ public class ASTListener extends ICSSBaseListener {
 	}
 
 	@Override
-	public void enterBoolean(ICSSParser.BooleanContext ctx) {
-		super.enterBoolean(ctx);
+	public void enterBooleann(ICSSParser.BooleannContext ctx) {
+		super.enterBooleann(ctx);
 		attachLiteral(new BoolLiteral(ctx.getText()));
 	}
 
