@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 public class Evaluator implements Transform {
+    //In this class I will evaluate expressions, in another I will replace variable references with their values
 
     private IHANLinkedList<HashMap<String, Literal>> variableValues;
 
