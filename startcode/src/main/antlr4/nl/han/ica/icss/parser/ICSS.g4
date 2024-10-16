@@ -82,10 +82,10 @@ name : LOWER_IDENT | CAPITAL_IDENT;
 //level 3:
 styleRuleObject: declaration | branch;
 
-branch: if else?;
+branch: ifBranch elseBranch?;
 
-if: IF BOX_BRACKET_OPEN variableReference BOX_BRACKET_CLOSE OPEN_BRACE styleRuleObject+ CLOSE_BRACE;
+ifBranch: IF BOX_BRACKET_OPEN variableReference BOX_BRACKET_CLOSE OPEN_BRACE styleRuleObject+ CLOSE_BRACE;
 
-else: ELSE OPEN_BRACE styleRuleObject+ CLOSE_BRACE;
+elseBranch: ELSE OPEN_BRACE styleRuleObject+ CLOSE_BRACE;
 
 

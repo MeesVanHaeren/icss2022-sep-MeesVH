@@ -1,5 +1,7 @@
 package nl.han.ica.icss.ast;
 
+import nl.han.ica.icss.ast.types.ExpressionType;
+
 import java.util.ArrayList;
 
 public abstract class Operation extends Expression {
@@ -25,5 +27,11 @@ public abstract class Operation extends Expression {
             rhs = (Expression) child;
         }
         return this;
+    }
+
+    @Override
+    public ExpressionType getType() {
+        //TODO there are rules around this thing, look them up and implement
+        return null;
     }
 }

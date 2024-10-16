@@ -1,14 +1,18 @@
 package nl.han.ica.icss.ast;
 
+import nl.han.ica.icss.ast.types.ExpressionType;
+
 import java.util.Objects;
 
 public class VariableReference extends Expression {
 
 	public String name;
-	
+	private ExpressionType expressionType;
+
 	public VariableReference(String name) {
 		super();
 		this.name = name;
+		this.expressionType = null;
 	}
 
 	@Override
@@ -29,5 +33,14 @@ public class VariableReference extends Expression {
 	public int hashCode() {
 
 		return Objects.hash(name);
+	}
+
+	public void setType(ExpressionType expressionType) {
+		this.expressionType = expressionType;
+	}
+
+	@Override
+	public ExpressionType getType() {
+		return null;
 	}
 }

@@ -13,6 +13,8 @@ import java.util.List;
 
 public class Checker {
 
+    //This thing is to store the types of variables, variable names go into String and the variable's type goes into expressionType
+    //It is a linked list to account for scopes. Every scope entered means another item and every scope exited means an item removed
     private IHANLinkedList<HashMap<String, ExpressionType>> variableTypes;
 
     private HashMap<String, HashMap<ExpressionType, Boolean>> propertyInputTypes = new HashMap<>();
@@ -40,14 +42,11 @@ public class Checker {
                 continue;
             }
             Declaration declaration = (Declaration) astNode;
-//            if (!(declaration.expression instanceof Literal)){
-//                continue;
-//            }
             HashMap<ExpressionType, Boolean> tolerableValues = propertyInputTypes.get(declaration.property.name.toLowerCase());
-            ExpressionType declarationsExpressionType = getExpressionType(declaration.expression);
-            if (!tolerableValues.containsKey(declarationsExpressionType)){
-                astNode.setError("Property value mismatch");
-            }
+            //TODO make this polymorphic too
+                if (!tolerableValues.getOrDefault(declaration.expression.getType(),Boolean.FALSE)) {
+                    astNode.setError("Value of property \"" + declaration.property.name + "\" doesn't accept expressions of type \"" + declaration.expression.getType() + "\".");
+                }
         }
     }
 
@@ -64,24 +63,5 @@ public class Checker {
         HashMap<ExpressionType, Boolean> backgroundColor = new HashMap();
         backgroundColor.put(ExpressionType.COLOR,Boolean.TRUE);
         properties.put("background-color",backgroundColor);
-    }
-
-    private ExpressionType getExpressionType(Expression expression){
-        if(expression instanceof BoolLiteral){
-            return ExpressionType.BOOL;
-        }
-        if(expression instanceof ColorLiteral){
-            return ExpressionType.COLOR;
-        }
-        if(expression instanceof PercentageLiteral){
-            return ExpressionType.PERCENTAGE;
-        }
-        if(expression instanceof PixelLiteral){
-            return ExpressionType.PIXEL;
-        }
-        if(expression instanceof ScalarLiteral){
-            return ExpressionType.SCALAR;
-        }
-        return null;
     }
 }
