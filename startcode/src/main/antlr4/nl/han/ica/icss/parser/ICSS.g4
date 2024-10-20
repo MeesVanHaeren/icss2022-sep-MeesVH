@@ -62,7 +62,7 @@ declaration: property COLON expression SEMICOLON;
 
 property: name;
 
-//To distinguish between these two, use #identifier
+//To distinguish between these, use #identifier
 expression:     literal #literalValue |
                 variableReference #variableValue|
                 expression MUL expression #multiplication|

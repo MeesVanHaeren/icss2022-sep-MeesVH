@@ -103,8 +103,7 @@ public class ASTListener extends ICSSBaseListener {
 	public void exitDeclaration(ICSSParser.DeclarationContext ctx) {
 		super.exitDeclaration(ctx);
 		Declaration declaration = (Declaration) currentContainer.pop();
-		Stylerule currentStylerule = (Stylerule) currentContainer.peek();
-		currentStylerule.body.add(declaration);
+		currentContainer.peek().addChild(declaration);
 	}
 	
 	@Override
@@ -116,8 +115,8 @@ public class ASTListener extends ICSSBaseListener {
 
 	//Values
 	private void attachLiteral(Literal literal){
-		Declaration currentDeclaration = (Declaration) currentContainer.peek();
-		currentDeclaration.expression = literal;
+		ASTNode context = currentContainer.peek();
+		context.addChild(literal);
 	}
 
 	@Override
@@ -150,4 +149,97 @@ public class ASTListener extends ICSSBaseListener {
 		attachLiteral(new ScalarLiteral(ctx.getText()));
 	}
 
+
+	//variableHandler
+	@Override
+	public void enterVariableAssignment(ICSSParser.VariableAssignmentContext ctx) {
+		super.enterVariableAssignment(ctx);
+		currentContainer.push(new VariableAssignment());
+	}
+
+	@Override
+	public void exitVariableAssignment(ICSSParser.VariableAssignmentContext ctx) {
+		super.exitVariableAssignment(ctx);
+		VariableAssignment variableAssignment = (VariableAssignment) currentContainer.pop();
+		//Scope check. If anything is in currentcontainer it means it's an inline variable assignment
+		//Which belongs to a stylerule, otherwise it goes into the AST's root
+		if (currentContainer.peek() == null){
+			ast.root.addChild(variableAssignment);
+		} else {
+			currentContainer.peek().addChild(variableAssignment);
+		}
+	}
+
+	@Override
+	public void enterVariableReference(ICSSParser.VariableReferenceContext ctx) {
+		super.enterVariableReference(ctx);
+		currentContainer.push(new VariableReference(ctx.getText()));
+	}
+
+	@Override
+	public void exitVariableReference(ICSSParser.VariableReferenceContext ctx) {
+		super.exitVariableReference(ctx);
+		VariableReference variableReference = (VariableReference) currentContainer.pop();
+		currentContainer.peek().addChild(variableReference);
+	}
+
+	@Override
+	public void enterVariableValue(ICSSParser.VariableValueContext ctx) {
+		super.enterVariableValue(ctx);
+	}
+
+	//Expression
+	@Override
+	public void enterAddition(ICSSParser.AdditionContext ctx) {
+		super.enterAddition(ctx);
+		currentContainer.push(new AddOperation());
+	}
+
+	@Override
+	public void exitAddition(ICSSParser.AdditionContext ctx) {
+		super.exitAddition(ctx);
+		AddOperation addOperation = (AddOperation) currentContainer.pop();
+		currentContainer.peek().addChild(addOperation);
+	}
+
+	@Override
+	public void enterMultiplication(ICSSParser.MultiplicationContext ctx) {
+		super.enterMultiplication(ctx);
+		currentContainer.push(new MultiplyOperation());
+	}
+
+	@Override
+	public void exitMultiplication(ICSSParser.MultiplicationContext ctx) {
+		super.exitMultiplication(ctx);
+		MultiplyOperation multiplyOperation = (MultiplyOperation) currentContainer.pop();
+		currentContainer.peek().addChild(multiplyOperation);
+	}
+
+	//If-Else
+	@Override
+	public void enterIfBranch(ICSSParser.IfBranchContext ctx) {
+		super.enterIfBranch(ctx);
+		currentContainer.push(new IfClause());
+	}
+
+	@Override
+	public void exitIfBranch(ICSSParser.IfBranchContext ctx) {
+		super.exitIfBranch(ctx);
+		IfClause ifClause = (IfClause) currentContainer.pop();
+		currentContainer.peek().addChild(ifClause);
+	}
+
+	@Override
+	public void enterElseBranch(ICSSParser.ElseBranchContext ctx) {
+		super.enterElseBranch(ctx);
+		currentContainer.push(new ElseClause());
+	}
+
+	@Override
+	public void exitElseBranch(ICSSParser.ElseBranchContext ctx) {
+		super.exitElseBranch(ctx);
+		ElseClause elseClause = (ElseClause) currentContainer.pop();
+		IfClause ifClause = (IfClause) currentContainer.peek();
+		ifClause.appendElse(elseClause);
+	}
 }

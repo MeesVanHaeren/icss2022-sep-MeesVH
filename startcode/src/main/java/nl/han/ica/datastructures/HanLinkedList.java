@@ -40,7 +40,12 @@ public class HanLinkedList<T> implements IHANLinkedList<T>{
 
     @Override
     public T getFirst() {
-        return header.getChild().getValue();
+        HanLinkedListNode<T> headerChild = header.getChild();
+        if (headerChild != null){
+            return headerChild.getValue();
+        } else {
+            return null;
+        }
     }
 
     @Override
