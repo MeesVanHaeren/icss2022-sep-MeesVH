@@ -1,20 +1,20 @@
 package nl.han.ica.datastructures;
 
-public class HanLinkedListNode<T> {
+public class HANLinkedListNode<T> {
 
     private T value;
 
-    private HanLinkedListNode<T> child;
+    private HANLinkedListNode<T> child;
 
-    HanLinkedListNode (T value){
+    HANLinkedListNode(T value){
         this.value = value;
     }
 
-    public HanLinkedListNode<T> getChild() {
+    public HANLinkedListNode<T> getChild() {
        return child;
     }
 
-    public void setChild(HanLinkedListNode<T> newChild) {
+    public void setChild(HANLinkedListNode<T> newChild) {
         child = newChild;
     }
 
@@ -26,7 +26,7 @@ public class HanLinkedListNode<T> {
         this.value = value;
     }
 
-    public HanLinkedListNode<T> findNode(int pos) {
+    public HANLinkedListNode<T> findNode(int pos) {
        if (child == null || pos <= 0){
            return this;
        }
@@ -45,11 +45,11 @@ public class HanLinkedListNode<T> {
         }
     }
 
-    public void insertNext(HanLinkedListNode<T> value) {
+    public void insertNext(HANLinkedListNode<T> value) {
         if(child == null){
             child = value;
         } else {
-            HanLinkedListNode<T> oldChild = this.child;
+            HANLinkedListNode<T> oldChild = this.child;
             child = value;
             child.setChild(oldChild);
         }

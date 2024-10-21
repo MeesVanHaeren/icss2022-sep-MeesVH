@@ -66,21 +66,22 @@ property: name;
 expression:     literal #literalValue |
                 variableReference #variableValue|
                 expression MUL expression #multiplication|
-                expression (PLUS | MIN) expression #addition;
+                expression PLUS expression #addition |
+                expression MIN expression #subtraction;
 
 literal:  booleann #bool | PIXELSIZE #pixelsize | PERCENTAGE #percentage | COLOR #color | SCALAR #scalar;
 
 booleann: TRUE | FALSE;
 
 //Level 1:
-variableAssignment: variableReference ASSIGNMENT_OPERATOR literal SEMICOLON;
+variableAssignment: variableReference ASSIGNMENT_OPERATOR expression SEMICOLON;
 
 variableReference: name;
 
 name : LOWER_IDENT | CAPITAL_IDENT;
 
 //level 3:
-styleRuleObject: declaration | branch;
+styleRuleObject: declaration | branch | variableAssignment;
 
 branch: ifBranch elseBranch?;
 

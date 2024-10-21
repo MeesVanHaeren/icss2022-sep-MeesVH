@@ -41,6 +41,6 @@ public class VariableReference extends Expression {
 
 	@Override
 	public ExpressionType getType() {
-		return null;
+		return expressionType;
 	}
 }

@@ -1,11 +1,11 @@
 package nl.han.ica.datastructures;
 
-public class HanLinkedList<T> implements IHANLinkedList<T>{
+public class HANLinkedList<T> implements IHANLinkedList<T>{
 
-    HanLinkedListHeaderNode<T> header;
+    HANLinkedListHeaderNode<T> header;
 
-    public HanLinkedList() {
-        header = new HanLinkedListHeaderNode<T>();
+    public HANLinkedList() {
+        header = new HANLinkedListHeaderNode<T>();
     }
 
     @Override
@@ -20,7 +20,7 @@ public class HanLinkedList<T> implements IHANLinkedList<T>{
 
     @Override
     public void insert(int index, T value) {
-        header.insert(index, new HanLinkedListNode<T>(value));
+        header.insert(index, new HANLinkedListNode<T>(value));
     }
 
     @Override
@@ -40,7 +40,7 @@ public class HanLinkedList<T> implements IHANLinkedList<T>{
 
     @Override
     public T getFirst() {
-        HanLinkedListNode<T> headerChild = header.getChild();
+        HANLinkedListNode<T> headerChild = header.getChild();
         if (headerChild != null){
             return headerChild.getValue();
         } else {

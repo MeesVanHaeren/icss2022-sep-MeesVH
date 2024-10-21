@@ -31,7 +31,16 @@ public abstract class Operation extends Expression {
 
     @Override
     public ExpressionType getType() {
-        //TODO there are rules around this thing, look them up and implement
-        return null;
+        //Returns scalar if both are scalar, and the other type if it has another type
+        //Since this is not checker code, it will return valid expresison types even if it really shouldnt be possible
+        //The expression will be checked in the checker.
+        //Color + Color .getType will return Color, this is how the checker will know something is up.
+        if (lhs.getType() == ExpressionType.SCALAR && rhs.getType() == ExpressionType.SCALAR){
+            return ExpressionType.SCALAR;
+        } else if (lhs.getType() != ExpressionType.SCALAR) {
+            return lhs.getType();
+        } else {
+            return rhs.getType();
+        }
     }
 }

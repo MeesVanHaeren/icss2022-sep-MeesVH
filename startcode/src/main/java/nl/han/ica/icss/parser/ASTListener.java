@@ -1,9 +1,7 @@
 package nl.han.ica.icss.parser;
 
-import java.util.Stack;
 
-
-import nl.han.ica.datastructures.HanStack;
+import nl.han.ica.datastructures.HANStack;
 import nl.han.ica.datastructures.IHANStack;
 import nl.han.ica.icss.ast.*;
 import nl.han.ica.icss.ast.literals.*;
@@ -13,7 +11,6 @@ import nl.han.ica.icss.ast.operations.SubtractOperation;
 import nl.han.ica.icss.ast.selectors.ClassSelector;
 import nl.han.ica.icss.ast.selectors.IdSelector;
 import nl.han.ica.icss.ast.selectors.TagSelector;
-import org.antlr.v4.runtime.tree.TerminalNode;
 
 /**
  * This class extracts the ICSS Abstract Syntax Tree from the Antlr Parse tree.
@@ -28,7 +25,7 @@ public class ASTListener extends ICSSBaseListener {
 
 	public ASTListener() {
 		ast = new AST();
-		currentContainer = new HanStack<>();
+		currentContainer = new HANStack<>();
 	}
     public AST getAST() {
         return ast;
@@ -200,6 +197,19 @@ public class ASTListener extends ICSSBaseListener {
 		super.exitAddition(ctx);
 		AddOperation addOperation = (AddOperation) currentContainer.pop();
 		currentContainer.peek().addChild(addOperation);
+	}
+
+	@Override
+	public void enterSubtraction(ICSSParser.SubtractionContext ctx) {
+		super.enterSubtraction(ctx);
+		currentContainer.push(new SubtractOperation());
+	}
+
+	@Override
+	public void exitSubtraction(ICSSParser.SubtractionContext ctx) {
+		super.exitSubtraction(ctx);
+		SubtractOperation subtractOperation = (SubtractOperation) currentContainer.pop();
+		currentContainer.peek().addChild(subtractOperation);
 	}
 
 	@Override

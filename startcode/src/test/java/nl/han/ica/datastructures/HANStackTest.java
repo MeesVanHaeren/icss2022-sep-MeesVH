@@ -4,15 +4,13 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-class HanStackTest {
+class HANStackTest {
 
     IHANStack<String> stringIHANStack;
 
     @BeforeEach
     void setup(){
-        stringIHANStack = new HanStack<>();
+        stringIHANStack = new HANStack<>();
     }
 
     @Test

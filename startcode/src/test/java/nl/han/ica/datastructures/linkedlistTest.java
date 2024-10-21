@@ -9,15 +9,15 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class HanLinkedListImplTest {
-    private HanLinkedList<String> hanLinkedList;
+class HANLinkedListImplTest {
+    private HANLinkedList<String> hanLinkedList;
 
-    HanLinkedListImplTest() {
+    HANLinkedListImplTest() {
     }
 
     @BeforeEach
     void setup() {
-        this.hanLinkedList = new HanLinkedList<String>();
+        this.hanLinkedList = new HANLinkedList<String>();
     }
 
     @Test

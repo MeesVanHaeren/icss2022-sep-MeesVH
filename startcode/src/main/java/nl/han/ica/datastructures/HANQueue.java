@@ -1,8 +1,8 @@
 package nl.han.ica.datastructures;
 
-public class HanQueue<T> implements IHANQueue<T>{
+public class HANQueue<T> implements IHANQueue<T>{
 
-    private IHANLinkedList<T> list = new HanLinkedList();
+    private IHANLinkedList<T> list = new HANLinkedList();
 
 
 
