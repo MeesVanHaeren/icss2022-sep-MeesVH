@@ -26,12 +26,12 @@ public class Checker {
          variableTypes.addFirst(new HashMap<>());
          establishTypes(propertyInputTypes);
          ArrayList<ASTNode> styleObjects = ast.root.getChildren();
-        for (int i = 0; i < styleObjects.size(); i++) {
-            if (styleObjects.get(i) instanceof VariableAssignment){
-                checkVariableAssignment((VariableAssignment) styleObjects.get(i));
+         for (ASTNode styleObject : styleObjects) {
+            if (styleObject instanceof VariableAssignment){
+                checkVariableAssignment((VariableAssignment) styleObject);
             }
-            else if (styleObjects.get(i) instanceof Stylerule) {
-                checkStylerule((Stylerule) styleObjects.get(i));
+            else if (styleObject instanceof Stylerule) {
+                checkStylerule((Stylerule) styleObject);
             }
         }
     }
@@ -48,7 +48,6 @@ public class Checker {
     private void checkStylerule(Stylerule stylerule){
         introduceScope();
         stylerule.body.forEach(this::checkBody);
-//        stylerule.selectors.forEach(this::checkSelector);
         removeScope();
     }
 
@@ -64,10 +63,6 @@ public class Checker {
 
     private void checkIfClause(IfClause ifClause) {
         introduceScope();
-        //TODO extract into method for duplicate use in declaration
-//        if (ifClause.conditionalExpression instanceof VariableReference){
-//            ((VariableReference) ifClause.conditionalExpression).setType(getScopedVariableType(((VariableReference) ifClause.conditionalExpression).name));
-//        }
         checkExpression(ifClause.conditionalExpression);
         if (ifClause.conditionalExpression.getType() != ExpressionType.BOOL && !ifClause.conditionalExpression.hasError()){
             ifClause.setError("given if clause with conditional expression isn't provided with an expression of a boolean type");

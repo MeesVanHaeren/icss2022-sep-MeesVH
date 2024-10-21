@@ -38,4 +38,9 @@ public class BoolLiteral extends Literal {
     public ExpressionType getType() {
         return ExpressionType.BOOL;
     }
+
+    @Override
+    public int getValue() {
+        return 0;
+    }
 }

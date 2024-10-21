@@ -249,7 +249,15 @@ public class ASTListener extends ICSSBaseListener {
 	public void exitElseBranch(ICSSParser.ElseBranchContext ctx) {
 		super.exitElseBranch(ctx);
 		ElseClause elseClause = (ElseClause) currentContainer.pop();
-		IfClause ifClause = (IfClause) currentContainer.peek();
-		ifClause.appendElse(elseClause);
+		ASTNode astNode = currentContainer.peek();
+		//I totally would solve this with an interface if that were allowed
+		//TODO: check if that is even allowed
+		if (astNode instanceof IfClause){
+			((IfClause) astNode).appendElse(elseClause);
+		} else if (astNode instanceof Stylerule) {
+			((Stylerule) astNode).appendElse(elseClause);
+		} else {
+			astNode.addChild(elseClause);
+		}
 	}
 }

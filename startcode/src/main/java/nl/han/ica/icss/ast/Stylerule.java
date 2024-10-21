@@ -1,7 +1,9 @@
 package nl.han.ica.icss.ast;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class Stylerule extends ASTNode {
 	
@@ -52,5 +54,16 @@ public class Stylerule extends ASTNode {
 	@Override
 	public int hashCode() {
 		return Objects.hash(selectors, body);
+	}
+
+	//Meesmade method. duplicate from ifclause's appendElse except it only accounts for it's children
+	public void appendElse(ElseClause elseClause) {
+		//Gets all ifClauses in the body
+		List<ASTNode> ifClauses = body.stream().filter(astNode -> astNode instanceof IfClause).collect(Collectors.toList());
+		if (!ifClauses.isEmpty()){
+			//If there IS more than none, get the last, and call this method on it.
+			IfClause lastIfClause = (IfClause) ifClauses.get(ifClauses.size() - 1);
+			lastIfClause.appendElse(elseClause);
+		}
 	}
 }

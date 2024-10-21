@@ -37,4 +37,9 @@ public class PixelLiteral extends Literal {
     public ExpressionType getType() {
         return ExpressionType.PIXEL;
     }
+
+    @Override
+    public int getValue() {
+        return value;
+    }
 }

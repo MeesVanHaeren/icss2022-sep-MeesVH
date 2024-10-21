@@ -34,4 +34,9 @@ public class ColorLiteral extends Literal {
     public ExpressionType getType() {
         return ExpressionType.COLOR;
     }
+
+    @Override
+    public int getValue() {
+        return 0;
+    }
 }
