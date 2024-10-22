@@ -3,6 +3,7 @@ package nl.han.ica.icss.transforms;
 import nl.han.ica.datastructures.HANLinkedList;
 import nl.han.ica.datastructures.IHANLinkedList;
 import nl.han.ica.icss.ast.*;
+import nl.han.ica.icss.ast.literals.BoolLiteral;
 import nl.han.ica.icss.ast.literals.PercentageLiteral;
 import nl.han.ica.icss.ast.literals.PixelLiteral;
 import nl.han.ica.icss.ast.literals.ScalarLiteral;
@@ -11,7 +12,6 @@ import nl.han.ica.icss.ast.operations.MultiplyOperation;
 import nl.han.ica.icss.ast.operations.SubtractOperation;
 import nl.han.ica.icss.ast.types.ExpressionType;
 
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -28,12 +28,25 @@ public class Evaluator implements Transform {
         variableValues = new HANLinkedList<>();
         variableValues.addFirst(new HashMap<>());
         ArrayList<ASTNode> styleObjects = ast.root.getChildren();
-        for (ASTNode styleObject : styleObjects) {
+        //While loop iterates over all the bodynodes and evaluates everything.
+        //If what it encounters is no longer needed in the final product (variable assignments and branches)
+        //It takes the relevant information, applies it, and removes it from the AST
+        int i = 0;
+        while (i < styleObjects.size()) {
+            ASTNode styleObject = styleObjects.get(i);
             if (styleObject instanceof VariableAssignment){
                 storeVariableReferenceExpression((VariableAssignment) styleObject);
+                //The assignment never said variable assignments were supposed to be deleted
+                //But I just think it looks way neater like this, because I'm already
+                //Replacing all the references with literals, so the variable assignments
+                //Are basically dead weight.
+                styleObjects.remove(i);
             }
             else if (styleObject instanceof Stylerule) {
                 evaluateStyleRule((Stylerule) styleObject);
+                i++;
+            } else {
+                i++;
             }
         }
     }
@@ -41,34 +54,38 @@ public class Evaluator implements Transform {
     //Semi-walker methods
     private void evaluateStyleRule(Stylerule stylerule){
         introduceScope();
-        stylerule.body.forEach(this::evaluateBody);
-        removeScope();
-    }
-
-    private void evaluateBody(ASTNode bodyNode){
-        if(bodyNode instanceof Declaration){
-            ((Declaration) bodyNode).expression = evaluateExpression(((Declaration) bodyNode).expression);
-        } else if (bodyNode instanceof IfClause) {
-            evaluateIfClause((IfClause) bodyNode);
-        } else if (bodyNode instanceof VariableAssignment) {
-            storeVariableReferenceExpression((VariableAssignment) bodyNode);
+        //While loop because the length of the loop is dynamic.
+        int i = 0;
+        while (i < stylerule.body.size()){
+            ASTNode bodyNode = stylerule.body.get(i);
+            if(bodyNode instanceof Declaration){
+                ((Declaration) bodyNode).expression = evaluateExpression(((Declaration) bodyNode).expression);
+                i++;
+            } else if (bodyNode instanceof VariableAssignment) {
+                storeVariableReferenceExpression((VariableAssignment) bodyNode);
+                stylerule.body.remove(i);
+            } else if (bodyNode instanceof IfClause) {
+                ArrayList<ASTNode> branchBodyNodes = extractBranch((IfClause) bodyNode);
+                stylerule.body.remove(i);
+                stylerule.body.addAll(i,branchBodyNodes);
+            }
         }
+        removeScope();
     }
 
-    private void evaluateIfClause(IfClause ifClause) {
-        ifClause.conditionalExpression = evaluateExpression(ifClause.conditionalExpression);
-        introduceScope();
-        ifClause.body.forEach(this::evaluateBody);
-        removeScope();
-        if (ifClause.elseClause != null){
-            evaluateElseClause(ifClause.elseClause);
+    private ArrayList<ASTNode> extractBranch(IfClause ifClause) {
+        BoolLiteral condition = (BoolLiteral) evaluateExpression(ifClause.conditionalExpression);
+        ifClause.conditionalExpression = condition;
+        if (condition.value) {
+            ifClause.elseClause = null;
+            return ifClause.body;
+        } else {
+            if (ifClause.elseClause != null) {
+                return ifClause.elseClause.body;
+            } else {
+                return new ArrayList<>();
+            }
         }
-    }
-
-    private void evaluateElseClause(ElseClause elseClause) {
-        introduceScope();
-        elseClause.body.forEach(this::evaluateBody);
-        removeScope();
     }
 
     //Real evalhead methods
@@ -86,12 +103,13 @@ public class Evaluator implements Transform {
     }
 
     private Expression getVariableReferenceExpression(VariableReference variableReference){
-        //remember that the highest scope in the values list is the one that needs to take priority
         //TODO: ask if I may change this datastructure
         //TODO: Currently this algorithm is really really inefficient, like, n2 inefficient, but scopes shouldnt go very high anyway
         Expression variableValue = null;
-        for (int i = variableValues.getSize()-1; i >= 0; i--) {
-            variableValue = variableValues.get(i).get(variableReference.name);
+        for (int i = 0; i < variableValues.getSize(); i++) {
+            if (variableValues.get(i).containsKey(variableReference.name)) {
+                variableValue = variableValues.get(i).get(variableReference.name);
+            }
         }
         return variableValue;
     }
