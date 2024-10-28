@@ -1,6 +1,6 @@
 package nl.han.ica.icss.ast;
 
-public class PropertyName extends ASTNode {
+public class PropertyName extends ASTNode implements CssRepresentable {
 
     public String name;
 
@@ -16,5 +16,10 @@ public class PropertyName extends ASTNode {
     @Override
     public String getNodeLabel() {
         return "Property: (" + name + ")";
+    }
+
+    @Override
+    public String getCssRepresentation() {
+        return name;
     }
 }

@@ -39,4 +39,9 @@ public class ColorLiteral extends Literal {
     public int getValue() {
         return 0;
     }
+
+    @Override
+    public String getCssRepresentation() {
+        return value;
+    }
 }

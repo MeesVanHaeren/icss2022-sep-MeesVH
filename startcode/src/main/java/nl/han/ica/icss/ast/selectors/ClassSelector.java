@@ -1,5 +1,6 @@
 package nl.han.ica.icss.ast.selectors;
 
+import nl.han.ica.icss.ast.CssRepresentable;
 import nl.han.ica.icss.ast.Selector;
 
 import java.util.Objects;
@@ -31,5 +32,10 @@ public class ClassSelector extends Selector {
     @Override
     public int hashCode() {
         return Objects.hash(cls);
+    }
+
+    @Override
+    public String getCssRepresentation() {
+        return cls;
     }
 }

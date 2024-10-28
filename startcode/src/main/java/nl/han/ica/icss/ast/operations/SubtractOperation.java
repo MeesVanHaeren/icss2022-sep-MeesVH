@@ -8,4 +8,9 @@ public class SubtractOperation extends Operation {
     public String getNodeLabel() {
         return "Subtract";
     }
+
+    @Override
+    public String getCssRepresentation() {
+        return "";
+    }
 }

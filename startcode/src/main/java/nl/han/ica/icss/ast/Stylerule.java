@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class Stylerule extends ASTNode {
+public class Stylerule extends ASTNode implements CssRepresentable{
 	
 	public ArrayList<Selector> selectors = new ArrayList<>();
 	public ArrayList<ASTNode> body = new ArrayList<>();
@@ -56,14 +56,19 @@ public class Stylerule extends ASTNode {
 		return Objects.hash(selectors, body);
 	}
 
-	//Meesmade method. duplicate from ifclause's appendElse except it only accounts for it's children
-	public void appendElse(ElseClause elseClause) {
-		//Gets all ifClauses in the body
-		List<ASTNode> ifClauses = body.stream().filter(astNode -> astNode instanceof IfClause).collect(Collectors.toList());
-		if (!ifClauses.isEmpty()){
-			//If there IS more than none, get the last, and call this method on it.
-			IfClause lastIfClause = (IfClause) ifClauses.get(ifClauses.size() - 1);
-			lastIfClause.appendElse(elseClause);
+	@Override
+	public String getCssRepresentation() {
+		StringBuilder stringBuilder = new StringBuilder();
+		stringBuilder.append(selectors.get(0).getCssRepresentation());
+		stringBuilder.append(" {\n");
+		for (ASTNode astNode : body){
+			if (astNode instanceof CssRepresentable){
+				stringBuilder.append("  ");
+				stringBuilder.append(((CssRepresentable) astNode).getCssRepresentation());
+				stringBuilder.append("\n");
+			}
 		}
+		stringBuilder.append("}");
+		return stringBuilder.toString();
 	}
 }

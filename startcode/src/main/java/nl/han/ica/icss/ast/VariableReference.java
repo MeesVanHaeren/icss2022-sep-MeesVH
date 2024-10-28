@@ -43,4 +43,9 @@ public class VariableReference extends Expression {
 	public ExpressionType getType() {
 		return expressionType;
 	}
+
+	@Override
+	public String getCssRepresentation() {
+		return null;
+	}
 }

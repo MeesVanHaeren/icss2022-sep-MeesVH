@@ -62,12 +62,19 @@ declaration: property COLON expression SEMICOLON;
 
 property: name;
 
-//To distinguish between these, use #identifier
 expression:     literal #literalValue |
                 variableReference #variableValue|
+                NOT_OPERATOR expression #inversion|
                 expression MUL expression #multiplication|
                 expression PLUS expression #addition |
-                expression MIN expression #subtraction;
+                expression MIN expression #subtraction |
+                expression LESSER_OPERATOR expression #lesserComparison |
+                expression GREATER_OPERATOR expression #greaterComparison |
+                expression EQ_GREATER_OPERATOR expression #eqLesserComparison |
+                expression EQ_LESSER_OPERATOR expression #eqGreaterComparison |
+                expression EQUAL_OPERATOR expression #equalComparison |
+                expression NOT_EQUAL_OPERATOR expression #notComparion
+                ;
 
 literal:  booleann #bool | PIXELSIZE #pixelsize | PERCENTAGE #percentage | COLOR #color | SCALAR #scalar;
 
@@ -88,5 +95,15 @@ branch: ifBranch elseBranch?;
 ifBranch: IF BOX_BRACKET_OPEN variableReference BOX_BRACKET_CLOSE OPEN_BRACE styleRuleObject+ CLOSE_BRACE;
 
 elseBranch: ELSE OPEN_BRACE styleRuleObject+ CLOSE_BRACE;
+
+//Boolean operators:
+
+LESSER_OPERATOR: '<';
+GREATER_OPERATOR: '>';
+EQUAL_OPERATOR: '==';
+NOT_EQUAL_OPERATOR: '!=';
+EQ_LESSER_OPERATOR: '<=';
+EQ_GREATER_OPERATOR: '>=';
+NOT_OPERATOR: '!';
 
 

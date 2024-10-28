@@ -43,4 +43,9 @@ public class BoolLiteral extends Literal {
     public int getValue() {
         return 0;
     }
+
+    @Override
+    public String getCssRepresentation() {
+        return Boolean.toString(value);
+    }
 }

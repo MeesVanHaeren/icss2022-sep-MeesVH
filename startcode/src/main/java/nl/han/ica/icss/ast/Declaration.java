@@ -6,7 +6,7 @@ import java.util.Objects;
 /*
  * A Declaration defines a style property. Declarations are things like "width: 100px"
  */
-public class Declaration extends ASTNode {
+public class Declaration extends ASTNode implements CssRepresentable {
 	public PropertyName property;
 	public Expression expression;
 
@@ -54,5 +54,15 @@ public class Declaration extends ASTNode {
 	@Override
 	public int hashCode() {
 		return Objects.hash(property, expression);
+	}
+
+	@Override
+	public String getCssRepresentation() {
+		StringBuilder stringBuilder = new StringBuilder();
+		stringBuilder.append(property.getCssRepresentation());
+		stringBuilder.append(": ");
+		stringBuilder.append(expression.getCssRepresentation());
+		stringBuilder.append(';');
+		return stringBuilder.toString();
 	}
 }

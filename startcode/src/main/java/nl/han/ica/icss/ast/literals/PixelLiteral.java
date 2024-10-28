@@ -42,4 +42,9 @@ public class PixelLiteral extends Literal {
     public int getValue() {
         return value;
     }
+
+    @Override
+    public String getCssRepresentation() {
+        return String.valueOf(value) + "px";
+    }
 }
