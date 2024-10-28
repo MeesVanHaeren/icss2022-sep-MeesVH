@@ -92,7 +92,7 @@ styleRuleObject: declaration | branch | variableAssignment;
 
 branch: ifBranch elseBranch?;
 
-ifBranch: IF BOX_BRACKET_OPEN variableReference BOX_BRACKET_CLOSE OPEN_BRACE styleRuleObject+ CLOSE_BRACE;
+ifBranch: IF BOX_BRACKET_OPEN expression BOX_BRACKET_CLOSE OPEN_BRACE styleRuleObject+ CLOSE_BRACE;
 
 elseBranch: ELSE OPEN_BRACE styleRuleObject+ CLOSE_BRACE;
 

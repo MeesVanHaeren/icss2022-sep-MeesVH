@@ -7,4 +7,9 @@ public class NotComparsion extends ComparisonOperation {
     public String getCssRepresentation() {
         return "";
     }
+
+    @Override
+    public String getNodeLabel() {
+        return "Not";
+    }
 }

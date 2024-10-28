@@ -7,4 +7,9 @@ public class GreaterComparison extends ComparisonOperation {
     public String getCssRepresentation() {
         return "";
     }
+
+    @Override
+    public String getNodeLabel() {
+        return "Greater";
+    }
 }

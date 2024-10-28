@@ -10,4 +10,9 @@ public class LesserComparison extends ComparisonOperation {
     public String getCssRepresentation() {
         return "";
     }
+
+    @Override
+    public String getNodeLabel() {
+        return "Lesser";
+    }
 }

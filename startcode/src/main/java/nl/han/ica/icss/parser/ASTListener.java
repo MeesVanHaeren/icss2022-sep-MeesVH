@@ -6,9 +6,10 @@ import nl.han.ica.datastructures.IHANStack;
 import nl.han.ica.icss.ast.*;
 import nl.han.ica.icss.ast.literals.*;
 import nl.han.ica.icss.ast.operations.AddOperation;
+import nl.han.ica.icss.ast.operations.InversionOperation;
 import nl.han.ica.icss.ast.operations.MultiplyOperation;
 import nl.han.ica.icss.ast.operations.SubtractOperation;
-import nl.han.ica.icss.ast.operations.comparisons.LesserComparison;
+import nl.han.ica.icss.ast.operations.comparisons.*;
 import nl.han.ica.icss.ast.selectors.ClassSelector;
 import nl.han.ica.icss.ast.selectors.IdSelector;
 import nl.han.ica.icss.ast.selectors.TagSelector;
@@ -87,8 +88,7 @@ public class ASTListener extends ICSSBaseListener {
 	@Override
 	public void exitStyleRule(ICSSParser.StyleRuleContext ctx) {
 		super.exitStyleRule(ctx);
-		Stylerule stylerule = (Stylerule) currentContainer.pop();
-		ast.root.addChild(stylerule);
+		genericExit();
 	}
 
 	//Declaration
@@ -159,14 +159,7 @@ public class ASTListener extends ICSSBaseListener {
 	@Override
 	public void exitVariableAssignment(ICSSParser.VariableAssignmentContext ctx) {
 		super.exitVariableAssignment(ctx);
-		VariableAssignment variableAssignment = (VariableAssignment) currentContainer.pop();
-		//Scope check. If anything is in currentcontainer it means it's an inline variable assignment
-		//Which belongs to a stylerule, otherwise it goes into the AST's root
-		if (currentContainer.peek() == null){
-			ast.root.addChild(variableAssignment);
-		} else {
-			currentContainer.peek().addChild(variableAssignment);
-		}
+		genericExit();
 	}
 
 	@Override
@@ -230,7 +223,6 @@ public class ASTListener extends ICSSBaseListener {
 		currentContainer.push(new IfClause());
 	}
 
-	//Different from generic because it needs to do one addditional action
 	@Override
 	public void exitIfBranch(ICSSParser.IfBranchContext ctx) {
 		super.exitIfBranch(ctx);
@@ -243,21 +235,16 @@ public class ASTListener extends ICSSBaseListener {
 		currentContainer.push(new ElseClause());
 	}
 
-	//different from generic because it needs to be added to a specific reference that could be refactored into an additional object
 	@Override
 	public void exitElseBranch(ICSSParser.ElseBranchContext ctx) {
-		//TODO: refactor this into the branch object implementation
 		super.exitElseBranch(ctx);
 		ElseClause elseClause = (ElseClause) currentContainer.pop();
 		lastIfClause.addChild(elseClause);
 	}
 
-	//different from generic because of an additional action
 	@Override
 	public void exitBranch(ICSSParser.BranchContext ctx) {
 		super.exitBranch(ctx);
-		//Escapes the current branch scope, to make bad situations with orphaned else clauses less confusing
-		//TODO: refactor branches into their own data transfer object to make these even more clean
 		lastIfClause = new IfClause();
 	}
 
@@ -267,10 +254,92 @@ public class ASTListener extends ICSSBaseListener {
 		super.enterLesserComparison(ctx);
 		currentContainer.push(new LesserComparison());
 	}
+	@Override
+	public void exitLesserComparison(ICSSParser.LesserComparisonContext ctx) {
+		super.exitLesserComparison(ctx);
+		genericExit();
+	}
+
+	@Override
+	public void enterGreaterComparison(ICSSParser.GreaterComparisonContext ctx) {
+		super.enterGreaterComparison(ctx);
+		currentContainer.push(new GreaterComparison());
+	}
+
+	@Override
+	public void exitGreaterComparison(ICSSParser.GreaterComparisonContext ctx) {
+		super.exitGreaterComparison(ctx);
+		genericExit();
+	}
+
+	@Override
+	public void enterEqLesserComparison(ICSSParser.EqLesserComparisonContext ctx) {
+		super.enterEqLesserComparison(ctx);
+		currentContainer.push(new EqLesserComparsion());
+	}
+
+	@Override
+	public void exitEqLesserComparison(ICSSParser.EqLesserComparisonContext ctx) {
+		super.exitEqLesserComparison(ctx);
+		genericExit();
+	}
+
+	@Override
+	public void enterEqGreaterComparison(ICSSParser.EqGreaterComparisonContext ctx) {
+		super.enterEqGreaterComparison(ctx);
+		currentContainer.push(new EqGreaterComparison());
+	}
+
+	@Override
+	public void exitEqGreaterComparison(ICSSParser.EqGreaterComparisonContext ctx) {
+		super.exitEqGreaterComparison(ctx);
+		genericExit();
+	}
+
+	@Override
+	public void enterEqualComparison(ICSSParser.EqualComparisonContext ctx) {
+		super.enterEqualComparison(ctx);
+		currentContainer.push(new EqualComparsion());
+	}
+
+	@Override
+	public void exitEqualComparison(ICSSParser.EqualComparisonContext ctx) {
+		super.exitEqualComparison(ctx);
+		genericExit();
+	}
+
+	@Override
+	public void enterNotComparion(ICSSParser.NotComparionContext ctx) {
+		super.enterNotComparion(ctx);
+		currentContainer.push(new NotComparsion());
+	}
+
+	@Override
+	public void exitNotComparion(ICSSParser.NotComparionContext ctx) {
+		super.exitNotComparion(ctx);
+		genericExit();
+	}
+
+	@Override
+	public void enterInversion(ICSSParser.InversionContext ctx) {
+		super.enterInversion(ctx);
+		currentContainer.push(new InversionOperation());
+	}
+
+	@Override
+	public void exitInversion(ICSSParser.InversionContext ctx) {
+		super.exitInversion(ctx);
+		genericExit();
+	}
 
 	private ASTNode genericExit(){
+		//Pops node from currentContainer and either adds it to the next top of stack or adds it to the root.
 		ASTNode astNode = currentContainer.pop();
-		currentContainer.peek().addChild(astNode);
+		if (currentContainer.peek() == null){
+			ast.root.addChild(astNode);
+		} else {
+			currentContainer.peek().addChild(astNode);
+		}
 		return astNode;
 	}
 }

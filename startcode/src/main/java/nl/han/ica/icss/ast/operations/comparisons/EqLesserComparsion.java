@@ -7,4 +7,9 @@ public class EqLesserComparsion extends ComparisonOperation {
     public String getCssRepresentation() {
         return "";
     }
+
+    @Override
+    public String getNodeLabel() {
+        return "Lesser or equal";
+    }
 }
