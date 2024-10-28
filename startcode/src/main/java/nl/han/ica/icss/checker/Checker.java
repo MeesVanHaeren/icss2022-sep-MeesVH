@@ -1,8 +1,15 @@
 package nl.han.ica.icss.checker;
 
+import jdk.jfr.BooleanFlag;
 import nl.han.ica.datastructures.HANLinkedList;
 import nl.han.ica.datastructures.IHANLinkedList;
 import nl.han.ica.icss.ast.*;
+import nl.han.ica.icss.ast.literals.BoolLiteral;
+import nl.han.ica.icss.ast.literals.ColorLiteral;
+import nl.han.ica.icss.ast.literals.PercentageLiteral;
+import nl.han.ica.icss.ast.literals.PixelLiteral;
+import nl.han.ica.icss.ast.operations.AddOperation;
+import nl.han.ica.icss.ast.operations.MultiplyOperation;
 import nl.han.ica.icss.ast.types.ExpressionType;
 
 import java.util.ArrayList;
@@ -37,6 +44,7 @@ public class Checker {
     }
 
     private void checkVariableAssignment(VariableAssignment variableAssignment){
+        checkExpression(variableAssignment.expression);
         appendTypeAssignment(variableAssignment);
     }
 
@@ -88,9 +96,34 @@ public class Checker {
         }
     }
 
-    private void checkOperation(Operation oparation) {
-        oparation.getChildren().forEach(expression -> checkExpression((Expression) expression));
-        //TODO check validity of operation
+    private void checkOperation(Operation operation) {
+        //Recursively apply this method to all it's children so the first operation to be checked is always one where this makes sense
+        operation.getChildren().forEach(expression -> checkExpression((Expression) expression));
+        if (operation.rhs.getType() == ExpressionType.COLOR || operation.lhs.getType() == ExpressionType.COLOR){
+            operation.setError(
+                    "Value in operation is a color, this hack is not supported by this compiler, please use a branch instead"
+            );
+        } else if (operation.rhs.getType() == ExpressionType.BOOL || operation.lhs.getType() == ExpressionType.BOOL) {
+            operation.setError(
+                    "Value in operation is a boolean, I really don't think you should be able to do this. Are you sure you're not making a mistake?"
+            );
+        } else{
+            if (operation instanceof MultiplyOperation) {
+                evaluateMultiplyOperation((MultiplyOperation) operation);
+            }
+        }
+    }
+
+    private void evaluateMultiplyOperation(MultiplyOperation operation) {
+        if (operation.rhs.getType() == ExpressionType.PIXEL && operation.lhs.getType() == ExpressionType.PIXEL){
+            operation.setError(
+                    "Both values in operation are pixelLiterals. This is not allowed in this compiler."
+            );
+        } else if (operation.rhs.getType() == ExpressionType.PERCENTAGE && operation.lhs.getType() == ExpressionType.PERCENTAGE) {
+            operation.setError(
+                    "Both values in operation are percentages. This is not allowed in this compiler."
+            );
+        }
     }
 
     private void checkVariableReference(VariableReference variableReference) {

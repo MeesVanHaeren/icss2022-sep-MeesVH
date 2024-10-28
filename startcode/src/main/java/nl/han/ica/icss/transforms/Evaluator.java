@@ -73,6 +73,7 @@ public class Evaluator implements Transform {
         removeScope();
     }
 
+    //Real evalhead methods
     private ArrayList<ASTNode> extractBranch(IfClause ifClause) {
         BoolLiteral condition = (BoolLiteral) evaluateExpression(ifClause.conditionalExpression);
         ifClause.conditionalExpression = condition;
@@ -88,7 +89,6 @@ public class Evaluator implements Transform {
         }
     }
 
-    //Real evalhead methods
     private Literal evaluateExpression(Expression expression){
         if (expression instanceof Literal) {
             return (Literal) expression;
@@ -103,8 +103,6 @@ public class Evaluator implements Transform {
     }
 
     private Expression getVariableReferenceExpression(VariableReference variableReference){
-        //TODO: ask if I may change this datastructure
-        //TODO: Currently this algorithm is really really inefficient, like, n2 inefficient, but scopes shouldnt go very high anyway
         Expression variableValue = null;
         for (int i = 0; i < variableValues.getSize(); i++) {
             if (variableValues.get(i).containsKey(variableReference.name)) {
@@ -159,7 +157,7 @@ public class Evaluator implements Transform {
 
     private ExpressionType getSignificantOperationType(Literal left, Literal right){
         //Method to find which of the two input variables is "significant" (not scalar)
-        // (a pixel, percentage or whatever else)
+        // (a pixel, percentage or whatever else, the checker needs to get rid of those anyway)
         Literal significant = left;
         if (left instanceof ScalarLiteral){
             significant = right;
