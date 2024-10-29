@@ -1,14 +1,9 @@
 package nl.han.ica.icss.checker;
 
-import jdk.jfr.BooleanFlag;
 import nl.han.ica.datastructures.HANLinkedList;
 import nl.han.ica.datastructures.IHANLinkedList;
 import nl.han.ica.icss.ast.*;
-import nl.han.ica.icss.ast.literals.BoolLiteral;
-import nl.han.ica.icss.ast.literals.ColorLiteral;
-import nl.han.ica.icss.ast.literals.PercentageLiteral;
-import nl.han.ica.icss.ast.literals.PixelLiteral;
-import nl.han.ica.icss.ast.operations.AddOperation;
+import nl.han.ica.icss.ast.operations.ComparisonOperation;
 import nl.han.ica.icss.ast.operations.MultiplyOperation;
 import nl.han.ica.icss.ast.types.ExpressionType;
 
@@ -99,18 +94,25 @@ public class Checker {
     private void checkOperation(Operation operation) {
         //Recursively apply this method to all it's children so the first operation to be checked is always one where this makes sense
         operation.getChildren().forEach(expression -> checkExpression((Expression) expression));
-        if (operation.rhs.getType() == ExpressionType.COLOR || operation.lhs.getType() == ExpressionType.COLOR){
+
+        if (!operation.hasCorrectTypes()){
+            operation.setError("Operation applied to expression of incorrect type");
+        }
+        if (operation instanceof MultiplyOperation) {
+            evaluateMultiplyOperation((MultiplyOperation) operation);
+        } else if (operation instanceof ComparisonOperation) {
+            evaluateComparisonOperation((ComparisonOperation) operation);
+        }
+    }
+
+    private void evaluateComparisonOperation(ComparisonOperation operation) {
+        if (operation.rhs.getType() != operation.lhs.getType()){
             operation.setError(
-                    "Value in operation is a color, this hack is not supported by this compiler, please use a branch instead"
-            );
-        } else if (operation.rhs.getType() == ExpressionType.BOOL || operation.lhs.getType() == ExpressionType.BOOL) {
-            operation.setError(
-                    "Value in operation is a boolean, I really don't think you should be able to do this. Are you sure you're not making a mistake?"
-            );
-        } else{
-            if (operation instanceof MultiplyOperation) {
-                evaluateMultiplyOperation((MultiplyOperation) operation);
-            }
+                    "Comparison done between incomparable types \"" +
+                    operation.lhs.getType()+
+                    "\" and \""+
+                    operation.rhs.getType()+
+                    "\"");
         }
     }
 
@@ -145,9 +147,6 @@ public class Checker {
 
     private void checkDeclaration(Declaration declaration) {
             checkExpression(declaration.expression);
-//            if (declaration.expression instanceof VariableReference){
-//                ((VariableReference) declaration.expression).setType(getScopedVariableType(((VariableReference) declaration.expression).name));
-//            }
             HashMap<ExpressionType, Boolean> tolerableValues = propertyInputTypes.get(declaration.property.name.toLowerCase());
             if (!tolerableValues.getOrDefault(declaration.expression.getType(),Boolean.FALSE)) {
                 if (!declaration.expression.hasError()) {

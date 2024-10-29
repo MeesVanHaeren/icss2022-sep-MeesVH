@@ -36,6 +36,7 @@ public class Evaluator implements Transform {
             ASTNode styleObject = styleObjects.get(i);
             if (styleObject instanceof VariableAssignment){
                 storeVariableReferenceExpression((VariableAssignment) styleObject);
+
                 //The assignment never said variable assignments were supposed to be deleted
                 //But I just think it looks way neater like this, because I'm already
                 //Replacing all the references with literals, so the variable assignments
@@ -117,33 +118,10 @@ public class Evaluator implements Transform {
     }
 
     private Literal evaluateOperation(Operation operation){
-        Literal left = evaluateExpression(operation.lhs);
-        Literal right = evaluateExpression(operation.rhs);
-        operation.lhs = left;
-        operation.rhs = right;
-        //This isn't polymorphic because this really shouldnt be called from an unchecked context, so delegating this to
-        //The operations like in the calculator assignment doesn't seem responsible. There is probably a
-        // software pattern that solves this but I also have 6 deadlines next friday so I will not look into it.
-        int result = 0;
-        if (operation instanceof AddOperation){
-            result = left.getValue() + right.getValue();
-        } else if (operation instanceof MultiplyOperation) {
-            result = left.getValue() * right.getValue();
-        } else if (operation instanceof SubtractOperation){
-            result = left.getValue() - right.getValue();
-        }
-        //TODO turn into factory pattern
-        Literal returnLiteral = null;
-        switch (getSignificantOperationType(left,right)){
-            case SCALAR:
-                returnLiteral = new ScalarLiteral(result);
-                break;
-            case PERCENTAGE:
-                returnLiteral = new PercentageLiteral(result);
-            case PIXEL:
-                returnLiteral = new PixelLiteral(result);
-        }
-        return returnLiteral;
+        operation.lhs = evaluateExpression(operation.lhs);
+        operation.rhs = evaluateExpression(operation.rhs);
+
+        return operation.getResult();
     }
 
     //Scope methods

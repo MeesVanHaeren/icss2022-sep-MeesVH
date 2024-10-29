@@ -9,6 +9,8 @@ public abstract class Operation extends Expression {
     public Expression lhs;
     public Expression rhs;
 
+    protected ArrayList<ExpressionType> acceptedTypes = new ArrayList<>();
+
     @Override
     public ArrayList<ASTNode> getChildren() {
         ArrayList<ASTNode> children = new ArrayList<>();
@@ -43,4 +45,14 @@ public abstract class Operation extends Expression {
             return rhs.getType();
         }
     }
+
+    public boolean acceptsType(ExpressionType expressionType){
+        return acceptedTypes.contains(expressionType);
+    }
+
+    public boolean hasCorrectTypes() {
+        return acceptsType(lhs.getType()) && acceptsType(rhs.getType());
+    }
+
+    public abstract Literal getResult();
 }
