@@ -18,7 +18,9 @@ versie:	1.0
 | AL03 | De code is goed geformatteerd, zo nodig voorzien van commentaar, correcte variabelenamen gebruikt, bevat geen onnodig ingewikkelde constructies en is zo onderhoudbaar mogelijk opgesteld. (naar oordeel van docent)                                                                                       | Must | 0      | n.v.t.         | ✅        |
 | AL04 | De docent heeft vastgesteld (tijdens les, assessment of op een andere manier) dat de compiler eigen werk is en dat je voldoet aan de beoordelingscriteria van APP-6, te weten: - Kent de standaardarchitectuur van compilers; - Kent de basisbegrippen over programmeertalen (zoals syntaxis, semantiek).  | Must | 0      | APP-6          | ✅        |
 
-In de code en source tree is soms commentaar geschreven die mijn denkproces beschrijft. Dit is achtergelaten om mijn denkproces te laten zien, ik weet niet of dit professioneel is of toegestaan is, maar voor transparantie is het achtergelaten. 
+In de code en source tree is soms commentaar geschreven die mijn denkproces beschrijft. Dit is achtergelaten om mijn denkproces te laten zien, ik weet niet of dit professioneel is of toegestaan is, maar voor transparantie is het achtergelaten.  
+
+Er zijn voor bepaalde onderdelen unittests geschreven, zoals de datastructuren en een bepaald stuk code van de checker. Het schrijven van unittests leek echter niet verplicht te zijn, en erg langzaam en frustrerend in de huidige codebase, dus is dit voor de meeste onderdelen verwaarloosd. Het is niet een doel van de unittests om goede code-coverage te hebben.  
 
 ### Parser
 
