@@ -40,8 +40,8 @@ public class BoolLiteral extends Literal {
     }
 
     @Override
-    public int getValue() {
-        return 0;
+    public Object getValue() {
+        return value;
     }
 
     @Override

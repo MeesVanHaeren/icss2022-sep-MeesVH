@@ -39,7 +39,7 @@ public class PixelLiteral extends Literal {
     }
 
     @Override
-    public int getValue() {
+    public Object getValue() {
         return value;
     }
 

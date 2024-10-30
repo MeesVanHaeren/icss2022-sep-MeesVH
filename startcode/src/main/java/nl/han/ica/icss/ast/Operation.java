@@ -55,4 +55,10 @@ public abstract class Operation extends Expression {
     }
 
     public abstract Literal getResult();
+
+    protected void literalGuard(){
+        if (!(lhs instanceof Literal && rhs instanceof Literal)){
+            throw new RuntimeException("one or more operations in an expression aren't evaluated yet, check the evaluator");
+        }
+    }
 }

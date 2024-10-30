@@ -2,7 +2,9 @@ package nl.han.ica.icss.ast.operations;
 
 import nl.han.ica.icss.ast.ASTNode;
 import nl.han.ica.icss.ast.Expression;
+import nl.han.ica.icss.ast.Literal;
 import nl.han.ica.icss.ast.Operation;
+import nl.han.ica.icss.ast.literals.LiteralFactory;
 import nl.han.ica.icss.ast.types.ExpressionType;
 
 public class InversionOperation extends Operation {
@@ -30,5 +32,11 @@ public class InversionOperation extends Operation {
     @Override
     public boolean hasCorrectTypes() {
         return acceptsType(rhs.getType());
+    }
+
+    @Override
+    public Literal getResult() {
+        literalGuard();
+        return LiteralFactory.getInstance().makeLiteral(getType(),!(Boolean)((Literal)rhs).getValue());
     }
 }

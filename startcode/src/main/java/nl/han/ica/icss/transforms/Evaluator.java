@@ -18,6 +18,7 @@ import java.util.HashMap;
 public class Evaluator implements Transform {
 
     private IHANLinkedList<HashMap<String, Literal>> variableValues;
+    private HashMap<String,Integer> previousDeclarations;
 
     public Evaluator() {
         variableValues = new HANLinkedList<>();
@@ -61,6 +62,15 @@ public class Evaluator implements Transform {
             ASTNode bodyNode = stylerule.body.get(i);
             if(bodyNode instanceof Declaration){
                 ((Declaration) bodyNode).expression = evaluateExpression(((Declaration) bodyNode).expression);
+                //Removes any previous declarations of the same property, not described in the assignment
+                //But it felt like an obvious thing that the evaluator should do
+                if (previousDeclarations.containsKey(((Declaration) bodyNode).property.name)){
+                    int previousIndex = previousDeclarations.get(((Declaration) bodyNode).property.name);
+                    stylerule.body.remove(previousIndex);
+                    previousDeclarations.replace((((Declaration) bodyNode).property.name),i);
+                } else {
+                    previousDeclarations.put(((Declaration) bodyNode).property.name,i);
+                }
                 i++;
             } else if (bodyNode instanceof VariableAssignment) {
                 storeVariableReferenceExpression((VariableAssignment) bodyNode);
@@ -127,6 +137,7 @@ public class Evaluator implements Transform {
     //Scope methods
     private void introduceScope(){
         variableValues.insert(variableValues.getSize(), new HashMap<>());
+        previousDeclarations = new HashMap<>();
     }
 
     private void removeScope(){

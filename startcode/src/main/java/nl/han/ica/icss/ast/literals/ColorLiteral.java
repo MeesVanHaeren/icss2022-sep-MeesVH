@@ -36,8 +36,8 @@ public class ColorLiteral extends Literal {
     }
 
     @Override
-    public int getValue() {
-        return 0;
+    public Object getValue() {
+        return value;
     }
 
     @Override
