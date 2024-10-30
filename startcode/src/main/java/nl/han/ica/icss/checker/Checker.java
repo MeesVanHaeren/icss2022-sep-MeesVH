@@ -3,8 +3,10 @@ package nl.han.ica.icss.checker;
 import nl.han.ica.datastructures.HANLinkedList;
 import nl.han.ica.datastructures.IHANLinkedList;
 import nl.han.ica.icss.ast.*;
+import nl.han.ica.icss.ast.operations.AddOperation;
 import nl.han.ica.icss.ast.operations.ComparisonOperation;
 import nl.han.ica.icss.ast.operations.MultiplyOperation;
+import nl.han.ica.icss.ast.operations.SubtractOperation;
 import nl.han.ica.icss.ast.types.ExpressionType;
 
 import java.util.ArrayList;
@@ -102,6 +104,16 @@ public class Checker {
             evaluateMultiplyOperation((MultiplyOperation) operation);
         } else if (operation instanceof ComparisonOperation) {
             evaluateComparisonOperation((ComparisonOperation) operation);
+        } else if (operation instanceof AddOperation || operation instanceof SubtractOperation){
+            evaluatePlusMinOperation(operation);
+        }
+    }
+
+    private void evaluatePlusMinOperation(Operation operation) {
+        if (operation.lhs.getType() != operation.rhs.getType()){
+            operation.setError(
+                    "Addition and substraction operations need to have operands of the same type."
+            );
         }
     }
 
@@ -117,13 +129,9 @@ public class Checker {
     }
 
     private void evaluateMultiplyOperation(MultiplyOperation operation) {
-        if (operation.rhs.getType() == ExpressionType.PIXEL && operation.lhs.getType() == ExpressionType.PIXEL){
+        if (!(operation.lhs.getType() == ExpressionType.SCALAR || operation.rhs.getType() == ExpressionType.SCALAR)) {
             operation.setError(
-                    "Both values in operation are pixelLiterals. This is not allowed in this compiler."
-            );
-        } else if (operation.rhs.getType() == ExpressionType.PERCENTAGE && operation.lhs.getType() == ExpressionType.PERCENTAGE) {
-            operation.setError(
-                    "Both values in operation are percentages. This is not allowed in this compiler."
+                    "Multiplication operation needs at least one scalar operand."
             );
         }
     }
